@@ -33,8 +33,8 @@ public class NumberTranslator implements Translator {
         ArrayList<String> ranks = new ArrayList<String>(Arrays.asList(textFrom.split("")));
 
         if(ranks.get(1).equals("1")){
-            ranks.set(1, ranks.get(1) + ranks.get(2));
-            ranks.remove(2);
+            ranks.set(2, ranks.get(1) + ranks.get(2));
+            ranks.set(1, "0");
         }
 
         for (int i = 0; i < ranks.size(); i++) {
@@ -43,10 +43,15 @@ public class NumberTranslator implements Translator {
             ranks.set(ranks.size()- i - 1, Integer.toString(number));
         }
 
-        for (int i = 0; i < ranks.size(); i++) {
-            if((i != ranks.size() - 1 && ranks.get(i).equals("0")))
-                continue;
-            result.append(dictionary.get(ranks.get(i))).append(" ");
+        if(Integer.parseInt(textFrom) == 0){
+            return dictionary.get("0");
+        }
+        else {
+            for (String rank : ranks) {
+                if ((rank.equals("0")))
+                    continue;
+                result.append(dictionary.get(rank)).append(" ");
+            }
         }
 
         return result.toString().substring(0, result.length() - 1);
@@ -68,6 +73,8 @@ public class NumberTranslator implements Translator {
                     result.append(simpleTranslate(ranks[i]));
                 }
                 case 1 -> {
+                    if(Integer.parseInt(ranks[i]) == 0)
+                        break;
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
                     if (endNumber == 1)
                         result.append("одна тысяча ");
@@ -77,6 +84,8 @@ public class NumberTranslator implements Translator {
                         result.append(simpleTranslate(ranks[i])).append(" тысяч ");
                 }
                 case 2 -> {
+                    if(Integer.parseInt(ranks[i]) == 0)
+                        break;
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
                     if (endNumber == 1)
                         result.append("один миллион ");
@@ -86,6 +95,8 @@ public class NumberTranslator implements Translator {
                         result.append(simpleTranslate(ranks[i])).append(" миллионов ");
                 }
                 case 3 -> {
+                    if(Integer.parseInt(ranks[i]) == 0)
+                        break;
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
                     if (endNumber == 1)
                         result.append("один миллиард ");

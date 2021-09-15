@@ -19,15 +19,52 @@ public class WordTranslator implements Translator {
         }
     }
 
-    public String[] rankSplit(String string){
-        return string.split("( миллиард.*?\\s| миллион.*?\\s| тысяч.*?\\s)");
+    public static String[] rankSplit(String string){
+        String[] ranks = new String[4];
+        Arrays.fill(ranks, "");
+
+        if(string.matches(".*миллиард.*")){
+            String[] tmp = string.split(" миллиард.*?\\s");
+            ranks[0] = tmp[0];
+            if(tmp.length > 1)
+                string = string.split(" миллиард.*?\\s")[1];
+            else
+                string = "";
+        }
+        if(string.matches(".*миллион.*")){
+            String[] tmp = string.split(" миллион.*?\\s");
+            ranks[1] = string.split(" миллион.*?\\s")[0];
+            if(tmp.length > 1)
+                string = string.split(" миллион.*?\\s")[1];
+            else
+                string = "";
+        }
+        if(string.matches(".*тысяч.*")){
+            String[] tmp = string.split(" тысяч.*?\\s");
+            ranks[2] = string.split(" тысяч.*?\\s")[0];
+            if(tmp.length > 1)
+                string = string.split(" тысяч.*?\\s")[1];
+            else
+                string = "";
+        }
+
+        ranks[3] = string;
+        return ranks;
     }
 
     public Integer simpleTranslate(String textFrom) {
         int result = 0;
+        if(textFrom.isEmpty())
+            return result;
         String[] ranks = textFrom.split(" ");
-        for (String rank:ranks)
+        for (String rank:ranks){
+            if(rank.equals("одна")){
+                result += Integer.parseInt(dictionary.get("один"));
+                continue;
+            }
             result += Integer.parseInt(dictionary.get(rank));
+        }
+
 
         return result;
     }
