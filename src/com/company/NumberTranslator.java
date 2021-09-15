@@ -3,6 +3,8 @@ package com.company;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class NumberTranslator implements Translator {
@@ -28,83 +30,72 @@ public class NumberTranslator implements Translator {
 
     public String simpleTranslate(String textFrom) {
         StringBuilder result = new StringBuilder();
-        String[] ranks = textFrom.split("");
+        ArrayList<String> ranks = new ArrayList<String>(Arrays.asList(textFrom.split("")));
 
-        if(ranks.length == 3 && ranks[1].equals("1")){
-            ranks[1] = ranks[1] + ranks[2];
-            ranks[2] = "";
-            int number = Integer.parseInt(ranks[0]) * 100;
-            ranks[0] = Integer.toString(number);
-        }
-        else if(ranks.length == 2 && ranks[0].equals("1")){
-            ranks[0] = ranks[0] + ranks[1];
-            ranks[1] = "";
-        }
-        else{
-            for (int i = 0; i < ranks.length; i++) {
-                int rank = (int) Math.pow(10, i);
-                int number = Integer.parseInt(ranks[ranks.length - i - 1]) * rank;
-                ranks[ranks.length - i - 1] = Integer.toString(number);
-            }
+        if(ranks.get(1).equals("1")){
+            ranks.set(1, ranks.get(1) + ranks.get(2));
+            ranks.remove(2);
         }
 
-        for (int i = 0; i < ranks.length; i++) {
-            if((i != ranks.length - 1 && ranks[i].equals("0")) || ranks[i].equals(""))
+        for (int i = 0; i < ranks.size(); i++) {
+            int degree = (int) Math.pow(10, i);
+            int number = Integer.parseInt(ranks.get(ranks.size() - i - 1)) * degree;
+            ranks.set(ranks.size()- i - 1, Integer.toString(number));
+        }
+
+        for (int i = 0; i < ranks.size(); i++) {
+            if((i != ranks.size() - 1 && ranks.get(i).equals("0")))
                 continue;
-
-            result.append(dictionary.get(ranks[i])).append(" ");
+            result.append(dictionary.get(ranks.get(i))).append(" ");
         }
 
-        return result.deleteCharAt(result.length() - 1).toString();
+        return result.toString().substring(0, result.length() - 1);
     }
+
 
     @Override
     public String translate(String textFrom) {
         StringBuilder result = new StringBuilder();
         String[] ranks = rankSplit(textFrom);
 
-        if(ranks[ranks.length - 1].length() != 3)
-            ranks[ranks.length - 1] = String.format("%03d", Integer.parseInt(ranks[ranks.length - 1]));
-
-
         for (int i = 0; i < ranks.length; i++) {
             int index = ranks.length - i - 1;
             int endNumber;
             switch (index) {
-                case 0:
+                case 0 -> {
+                    if(Integer.parseInt(ranks[i]) == 0 && ranks.length > 1)
+                        break;
                     result.append(simpleTranslate(ranks[i]));
-                    break;
-                case 1:
+                }
+                case 1 -> {
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
-                    if(endNumber == 1)
+                    if (endNumber == 1)
                         result.append("одна тысяча ");
-                    else if(endNumber%10 > 1 && endNumber%10 < 5 && endNumber/10 != 1)
+                    else if (endNumber % 10 > 1 && endNumber % 10 < 5 && endNumber / 10 != 1)
                         result.append(simpleTranslate(ranks[i])).append(" тысячи ");
                     else
                         result.append(simpleTranslate(ranks[i])).append(" тысяч ");
-                    break;
-                case 2:
+                }
+                case 2 -> {
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
-                    if(endNumber == 1)
+                    if (endNumber == 1)
                         result.append("один миллион ");
-                    else if(endNumber%10 > 1 && endNumber%10 < 5 && endNumber/10 != 1)
+                    else if (endNumber % 10 > 1 && endNumber % 10 < 5 && endNumber / 10 != 1)
                         result.append(simpleTranslate(ranks[i])).append(" миллиона ");
                     else
                         result.append(simpleTranslate(ranks[i])).append(" миллионов ");
-                    break;
-                case 3:
+                }
+                case 3 -> {
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
-                    if(endNumber == 1)
+                    if (endNumber == 1)
                         result.append("один миллиард ");
-                    else if(endNumber%10 > 1 && endNumber%10 < 5 && endNumber/10 != 1)
+                    else if (endNumber % 10 > 1 && endNumber % 10 < 5 && endNumber / 10 != 1)
                         result.append(simpleTranslate(ranks[i])).append(" миллиарда ");
                     else
                         result.append(simpleTranslate(ranks[i])).append(" миллиардов ");
-                    break;
-
+                }
             }
         }
-
         return result.toString();
     }
 
