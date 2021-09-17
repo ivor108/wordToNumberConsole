@@ -3,6 +3,7 @@ package com.company;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,70 +22,65 @@ public class WordTranslator implements Translator {
 
     public static String[] rankSplit(String string){
         String[] ranks = new String[4];
+        String[] ranksName = new String[3];
+        ranksName[0] = "миллиард";
+        ranksName[1] = "миллион";
+        ranksName[2] = "тысяч";
         Arrays.fill(ranks, "");
 
-        if(string.matches(".*миллиард.*")){
-            String[] tmp = string.split(" миллиард.*?\\s");
-            ranks[0] = tmp[0];
-            if(tmp.length > 1)
-                string = string.split(" миллиард.*?\\s")[1];
-            else
-                string = "";
-        }
-        if(string.matches(".*миллион.*")){
-            String[] tmp = string.split(" миллион.*?\\s");
-            ranks[1] = string.split(" миллион.*?\\s")[0];
-            if(tmp.length > 1)
-                string = string.split(" миллион.*?\\s")[1];
-            else
-                string = "";
-        }
-        if(string.matches(".*тысяч.*")){
-            String[] tmp = string.split(" тысяч.*?\\s");
-            ranks[2] = string.split(" тысяч.*?\\s")[0];
-            if(tmp.length > 1)
-                string = string.split(" тысяч.*?\\s")[1];
-            else
-                string = "";
+        for (int i = 0; i < 3; i++) {
+            if(string.matches(".*" + ranksName[i] + ".*")){
+                String[] tmp = string.split(" " + ranksName[i] + ".*?\\s");
+                ranks[i] = tmp[0];
+                if(tmp.length > 1)
+                    string = tmp[1];
+                else
+                    string = "";
+            }
         }
 
         ranks[3] = string;
         return ranks;
     }
 
-    public Integer simpleTranslate(String textFrom) {
+    public BigInteger simpleTranslate(String textFrom) {
         int result = 0;
         if(textFrom.isEmpty())
-            return result;
+            return BigInteger.valueOf(result);
         String[] ranks = textFrom.split(" ");
         for (String rank:ranks){
             if(rank.equals("одна")){
                 result += Integer.parseInt(dictionary.get("один"));
                 continue;
             }
-            result += Integer.parseInt(dictionary.get(rank));
+            if(rank.equals("две")){
+                result += Integer.parseInt(dictionary.get("два"));
+                continue;
+            }
+            if(dictionary.containsKey(rank))
+                result += Integer.parseInt(dictionary.get(rank));
         }
-
-
-        return result;
+        return BigInteger.valueOf(result);
     }
 
     @Override
     public String translate(String textFrom) {
-        int result = 0;
+        BigInteger result = new BigInteger("0");
         String[] ranks = rankSplit(textFrom);
 
         for (int i = 0; i < ranks.length; i++) {
             int index = ranks.length - i - 1;
             switch (index) {
-                case 0 -> result += simpleTranslate(ranks[i]);
-                case 1 -> result += simpleTranslate(ranks[i]) * 1000;
-                case 2 -> result += simpleTranslate(ranks[i]) * 1000000;
-                case 3 -> result += simpleTranslate(ranks[i]) * 1000000000;
+                case 0 -> result = result.add(simpleTranslate(ranks[i]));
+                case 1 -> result = result.add(simpleTranslate(ranks[i]).multiply(new BigInteger("1000")) );
+                case 2 -> result = result.add(simpleTranslate(ranks[i]).multiply(new BigInteger("1000000")) );
+                case 3 -> result = result.add(simpleTranslate(ranks[i]).multiply(new BigInteger("1000000000")) );
             }
         }
+        if(result.equals(new BigInteger("0")) && !textFrom.equals("ноль"))
+            return "";
 
-        return Integer.toString(result);
+        return result.toString();
     }
 
     @Override

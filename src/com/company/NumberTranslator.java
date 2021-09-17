@@ -20,6 +20,8 @@ public class NumberTranslator implements Translator {
     }
 
     public String[] rankSplit(String string){
+        if(!string.matches("\\d+"))
+            return null;
         int targetLength = string.length();
         if (string.length()%3 != 0)
             targetLength = (string.length()/3 + 1)*3;
@@ -63,6 +65,9 @@ public class NumberTranslator implements Translator {
         StringBuilder result = new StringBuilder();
         String[] ranks = rankSplit(textFrom);
 
+        if(ranks == null)
+            return "";
+
         for (int i = 0; i < ranks.length; i++) {
             int index = ranks.length - i - 1;
             int endNumber;
@@ -76,9 +81,19 @@ public class NumberTranslator implements Translator {
                     if(Integer.parseInt(ranks[i]) == 0)
                         break;
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
-                    if (endNumber == 1)
+                    if (endNumber % 10 == 1 && endNumber / 10 != 1){
+                        String prefix = ranks[i].substring(0, ranks[i].length() - 1);
+                        if(Integer.parseInt(prefix) != 0)
+                            result.append(simpleTranslate( prefix + "0")).append(" ");
                         result.append("одна тысяча ");
-                    else if (endNumber % 10 > 1 && endNumber % 10 < 5 && endNumber / 10 != 1)
+                    }
+                    else if (endNumber % 10 == 2 && endNumber / 10 != 1){
+                        String prefix = ranks[i].substring(0, ranks[i].length() - 1);
+                        if(Integer.parseInt(prefix) != 0)
+                            result.append(simpleTranslate( prefix + "0")).append(" ");
+                        result.append("две тысячи ");
+                    }
+                    else if (endNumber % 10 > 2 && endNumber % 10 < 5 && endNumber / 10 != 1)
                         result.append(simpleTranslate(ranks[i])).append(" тысячи ");
                     else
                         result.append(simpleTranslate(ranks[i])).append(" тысяч ");
@@ -87,8 +102,12 @@ public class NumberTranslator implements Translator {
                     if(Integer.parseInt(ranks[i]) == 0)
                         break;
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
-                    if (endNumber == 1)
+                    if (endNumber % 10 == 1 && endNumber / 10 != 1){
+                        String prefix = ranks[i].substring(0, ranks[i].length() - 1);
+                        if(Integer.parseInt(prefix) != 0)
+                            result.append(simpleTranslate( prefix + "0")).append(" ");
                         result.append("один миллион ");
+                    }
                     else if (endNumber % 10 > 1 && endNumber % 10 < 5 && endNumber / 10 != 1)
                         result.append(simpleTranslate(ranks[i])).append(" миллиона ");
                     else
@@ -98,8 +117,12 @@ public class NumberTranslator implements Translator {
                     if(Integer.parseInt(ranks[i]) == 0)
                         break;
                     endNumber = Integer.parseInt(ranks[i].substring(ranks[i].length() - 2));
-                    if (endNumber == 1)
-                        result.append("один миллиард ");
+                    if (endNumber % 10 == 1 && endNumber / 10 != 1){
+                        String prefix = ranks[i].substring(0, ranks[i].length() - 1);
+                        if(Integer.parseInt(prefix) != 0)
+                            result.append(simpleTranslate( prefix + "0")).append(" ");
+                        result.append("один миддиард ");
+                    }
                     else if (endNumber % 10 > 1 && endNumber % 10 < 5 && endNumber / 10 != 1)
                         result.append(simpleTranslate(ranks[i])).append(" миллиарда ");
                     else

@@ -7,9 +7,11 @@ import java.util.Collections;
 
 public class Main {
 
-    private static final String PATH = "C:\\Users\\pepega\\IdeaProjects\\wordToNumberConsole\\src\\";
+    private static final String PATH = "D:\\dict\\";
 
     public static String[] rankSplit(String string){
+        if(!string.matches("\\d+"))
+            return null;
         int targetLength = string.length();
         if (string.length()%3 != 0)
             targetLength = (string.length()/3 + 1)*3;
@@ -20,8 +22,23 @@ public class Main {
 
     public static String[] rankSplit2(String string){
         String[] ranks = new String[4];
+        String[] ranksName = new String[3];
+        ranksName[0] = "миллиард";
+        ranksName[1] = "миллион";
+        ranksName[2] = "тысяч";
         Arrays.fill(ranks, "");
 
+        for (int i = 0; i < 3; i++) {
+            if(string.matches(".*" + ranksName[i] + ".*")){
+                String[] tmp = string.split(" " + ranksName[i] + ".*?\\s");
+                ranks[i] = tmp[0];
+                if(tmp.length > 1)
+                    string = tmp[1];
+                else
+                    string = "";
+            }
+        }
+        /*
         if(string.matches(".*миллиард.*")){
             String[] tmp = string.split(" миллиард.*?\\s");
             ranks[0] = tmp[0];
@@ -46,7 +63,7 @@ public class Main {
             else
                 string = "";
         }
-
+        */
         ranks[3] = string;
         return ranks;
         //return string.split("( миллиард.*?\\s| миллион.*?\\s| тысяч.*?\\s| единиц.*?\\s)");
@@ -56,7 +73,7 @@ public class Main {
         NumberTranslator numberTranslator = new NumberTranslator(Languages.RU, PATH);
         WordTranslator wordTranslator = new WordTranslator(Languages.RU, PATH);
 
-        String textFrom = "1000";
+        String textFrom = "102102";
         System.out.println(numberTranslator.translate(textFrom));
         System.out.println(Arrays.toString(rankSplit(textFrom)));
 
