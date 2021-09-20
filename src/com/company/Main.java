@@ -23,9 +23,14 @@ public class Main {
     public static String[] rankSplit2(String string){
         String[] ranks = new String[4];
         String[] ranksName = new String[3];
+        /*
         ranksName[0] = "миллиард";
         ranksName[1] = "миллион";
         ranksName[2] = "тысяч";
+         */
+        ranksName[0] = "billion";
+        ranksName[1] = "million";
+        ranksName[2] = "thousand";
         Arrays.fill(ranks, "");
 
         for (int i = 0; i < 3; i++) {
@@ -41,33 +46,20 @@ public class Main {
 
         ranks[3] = string;
         return ranks;
-        //return string.split("( миллиард.*?\\s| миллион.*?\\s| тысяч.*?\\s| единиц.*?\\s)");
     }
 
 
     public static void main(String[] args) throws IOException {
-        /*
-        RuNumberTranslator numberTranslator = new RuNumberTranslator(Languages.RU, PATH);
-        RuWordTranslator wordTranslator = new RuWordTranslator(Languages.RU, PATH);
 
-        String textFrom = "102102";
-        System.out.println(numberTranslator.translate(textFrom));
-        System.out.println(Arrays.toString(rankSplit(textFrom)));
+        Translator tr =  TranslatorStrategy.valueOf("RU").getTranslator();
+        System.out.println(tr.translateNumber("1"));
+        System.out.println(tr.translateWord("сто двадцать три"));
 
-        String textFrom2 = numberTranslator.translate(textFrom);
-        System.out.println(Arrays.toString(rankSplit2(textFrom2)));
-        //System.out.println(textFrom2.matches(".*тысяч.*"));
-        //System.out.println(Arrays.toString(textFrom2.split("( миллиард.*?\\s| миллион.*?\\s| тысяч.*?\\s)")));
-        System.out.println(wordTranslator.translate(textFrom2));
-         */
-
-        /*
-        TranslatorContext translator = new TranslatorContext(TranslatorStrategy.RU);
-        System.out.println(translator.numberTranslate("123"));
-        System.out.println(translator.wordTranslate("сто двадцать три"));
-         */
-
-
+        EnTranslator enTranslator = new EnTranslator();
+        String textTo = enTranslator.translateNumber("1113123123");
+        System.out.println(textTo);
+        System.out.println(enTranslator.translateWord(textTo));
+        //System.out.println(Arrays.toString("one hundred twenty three".split(" hundred ")));
 
     }
 }
