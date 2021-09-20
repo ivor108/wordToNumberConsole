@@ -7,10 +7,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class NumberTranslator implements Translator {
+public class RuNumberTranslator  {
 
-    public NumberTranslator(Languages language, String path) throws IOException {
-        try(BufferedReader br = new BufferedReader(new FileReader(path + language.toString() + ".csv"))){
+    private final HashMap<String, String> dictionary = new HashMap<>();
+
+    public RuNumberTranslator(String path) throws IOException {
+        try(BufferedReader br = new BufferedReader(new FileReader(path + "RU.csv"))){
             String line;
             while ((line = br.readLine()) != null){
                 String[] keyVal = line.split(", ");
@@ -60,7 +62,6 @@ public class NumberTranslator implements Translator {
     }
 
 
-    @Override
     public String translate(String textFrom) {
         StringBuilder result = new StringBuilder();
         String[] ranks = rankSplit(textFrom);
@@ -133,7 +134,6 @@ public class NumberTranslator implements Translator {
         return result.toString();
     }
 
-    @Override
     public HashMap<String, String> getDictionary() {
         return dictionary;
     }

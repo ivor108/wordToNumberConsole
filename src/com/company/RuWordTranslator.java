@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class WordTranslator implements Translator {
+public class RuWordTranslator {
 
-    public WordTranslator(Languages language, String path) throws IOException {
-        try(BufferedReader br = new BufferedReader(new FileReader(path + language.toString() + ".csv"))){
+    private final HashMap<String, String> dictionary = new HashMap<>();
+
+    public RuWordTranslator(String path) throws IOException {
+        try(BufferedReader br = new BufferedReader(new FileReader(path + "RU.csv"))){
             String line;
             while ((line = br.readLine()) != null){
                 String[] keyVal = line.split(", ");
@@ -63,7 +65,6 @@ public class WordTranslator implements Translator {
         return BigInteger.valueOf(result);
     }
 
-    @Override
     public String translate(String textFrom) {
         BigInteger result = new BigInteger("0");
         String[] ranks = rankSplit(textFrom);
@@ -83,7 +84,6 @@ public class WordTranslator implements Translator {
         return result.toString();
     }
 
-    @Override
     public HashMap<String, String> getDictionary() {
         return dictionary;
     }
